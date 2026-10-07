@@ -39,6 +39,13 @@ android {
 }
 
 dependencies {
+    // Навигация Compose: NavHost, NavController, composable(...)
+    implementation(libs.androidx.navigation.compose)
+    // collectAsStateWithLifecycle() — безопасный сбор StateFlow с учётом жизненного цикла
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    // viewModel() — получение ViewModel внутри composable
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

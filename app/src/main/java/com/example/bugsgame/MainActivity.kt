@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.bugsgame.model.zodiacFor
 import com.example.bugsgame.ui.theme.BugsGameTheme
 import java.time.Instant
 import java.time.LocalDate
@@ -75,51 +77,6 @@ class MainActivity : ComponentActivity() {
 }
 
 private val FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-
-
-enum class Zodiac(val displayName: String, val resId: Int) {
-    OVEN("Овен", R.mipmap.oven_foreground),
-    TAURUS("Телец", R.mipmap.taurus_foreground),
-    TWINS("Близнецы", R.mipmap.twins_foreground),
-    RAK("Рак", R.mipmap.rak_foreground),
-    LION("Лев", R.mipmap.lion_foreground),
-    VIRGIN("Дева", R.mipmap.virgin_foreground),
-    SCALES("Весы", R.mipmap.scales_foreground),
-    SCORPIO("Скорпион", R.mipmap.scorpio_foreground),
-    SAGITTARIUS("Стрелец", R.mipmap.sagittarius_foreground),
-    CAPRICORN("Козерог", R.mipmap.capricorn_foreground),
-    AQUARIUS("Водолей", R.mipmap.aquarius_foreground),
-    FISH("Рыбы", R.mipmap.fish_foreground)
-}
-
-fun zodiacFor(date: LocalDate): Zodiac {
-    return when {
-        date.monthValue == 1 && date.dayOfMonth <= 19 -> Zodiac.CAPRICORN
-        date.monthValue == 1 -> Zodiac.AQUARIUS
-        date.monthValue == 2 && date.dayOfMonth <= 18 -> Zodiac.AQUARIUS
-        date.monthValue == 2 -> Zodiac.FISH
-        date.monthValue == 3 && date.dayOfMonth <= 20 -> Zodiac.FISH
-        date.monthValue == 3 -> Zodiac.OVEN
-        date.monthValue == 4 && date.dayOfMonth <= 19 -> Zodiac.OVEN
-        date.monthValue == 4 -> Zodiac.TAURUS
-        date.monthValue == 5 && date.dayOfMonth <= 20 -> Zodiac.TAURUS
-        date.monthValue == 5 -> Zodiac.TWINS
-        date.monthValue == 6 && date.dayOfMonth <= 20 -> Zodiac.TWINS
-        date.monthValue == 6 -> Zodiac.RAK
-        date.monthValue == 7 && date.dayOfMonth <= 22 -> Zodiac.RAK
-        date.monthValue == 7 -> Zodiac.LION
-        date.monthValue == 8 && date.dayOfMonth <= 22 -> Zodiac.LION
-        date.monthValue == 8 -> Zodiac.VIRGIN
-        date.monthValue == 9 && date.dayOfMonth <= 22 -> Zodiac.VIRGIN
-        date.monthValue == 9 -> Zodiac.SCALES
-        date.monthValue == 10 && date.dayOfMonth <= 22 -> Zodiac.SCALES
-        date.monthValue == 10 -> Zodiac.SCORPIO
-        date.monthValue == 11 && date.dayOfMonth <= 21 -> Zodiac.SCORPIO
-        date.monthValue == 11 -> Zodiac.SAGITTARIUS
-        date.monthValue == 12 && date.dayOfMonth <= 21 -> Zodiac.SAGITTARIUS
-        else -> Zodiac.CAPRICORN
-    }
-}
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun Greeting(modifier: Modifier = Modifier) {
@@ -137,6 +94,20 @@ fun Greeting(modifier: Modifier = Modifier) {
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var birthDate by rememberSaveable { mutableStateOf<LocalDate?>(null) }
+    var showReg by rememberSaveable { mutableStateOf(false) }
+
+    if (showReg) {
+        Reg(
+            text = text,
+            genders = selectGenders,
+            courses = selectedCourses,
+            difficulties = difficulties,
+            selectDifficulties = selectDifficulties,
+            birthDate = birthDate,
+            onBack = { showReg = false }
+        )
+        return
+    }
 
     Column(
         modifier = modifier
@@ -294,6 +265,58 @@ fun Greeting(modifier: Modifier = Modifier) {
                 )
             }
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {
+                    showReg = true
+                }) {
+                Text("Регистрация")
+            }
+        }
+    }
+}
+
+@Composable
+fun Reg(
+    text: String,
+    genders: String,
+    courses: String,
+    difficulties: List<String>,
+    selectDifficulties: Int,
+    birthDate: LocalDate?,
+    onBack: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Регистрация")
+        birthDate?.let { date ->
+            val zodiac = zodiacFor(date)
+            Image(
+                painter = painterResource(id = zodiac.resId),
+                contentDescription = zodiac.displayName,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+            )
+            Text(zodiac.displayName)
+        }
+        Text("Фио: $text")
+        Text("Пол: $genders")
+        Text("Курс: $courses")
+        Text("Сложность: ${difficulties[selectDifficulties]}")
+        Text("Дата рождения: ${birthDate?.format(FORMATTER) ?: ""}")
+        Button(onClick = onBack) { Text("Назад") }
     }
 }
 
