@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.example.bugsgame.Greeting
+import com.example.bugsgame.ui.registration.RegistrationRoute
 import com.example.bugsgame.ui.authors.AuthorsScreen
 import com.example.bugsgame.ui.rules.RulesScreen
 import com.example.bugsgame.ui.settings.SettingsScreen
@@ -43,7 +43,7 @@ fun AppNavHost() {
             modifier = Modifier.padding(innerPadding),
         ) { page ->
             when (page) {
-                0 -> Greeting()
+                0 -> RegistrationRoute()
                 1 -> RulesScreen()
                 2 -> AuthorsScreen()
                 3 -> SettingsScreen()
