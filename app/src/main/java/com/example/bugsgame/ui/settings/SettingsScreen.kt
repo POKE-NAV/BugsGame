@@ -16,7 +16,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,10 +25,21 @@ import com.example.bugsgame.model.GameSettings
 import com.example.bugsgame.ui.theme.BugsGameTheme
 import kotlin.math.roundToInt
 
+/**
+ * Stateless-экран настроек: получает состояние и события.
+ * Единственное собственное состояние — открыт ли диалог подтверждения сброса.
+ */
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
-    var settings by remember { mutableStateOf(GameSettings()) }
-    var showResetDialog by remember { mutableStateOf(false) }
+fun SettingsScreen(
+    settings: GameSettings,
+    onGameSpeedChanged: (Int) -> Unit,
+    onMaxBugsChanged: (Int) -> Unit,
+    onBonusIntervalChanged: (Int) -> Unit,
+    onRoundDurationChanged: (Int) -> Unit,
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var showResetDialog by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -42,28 +53,28 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             value = settings.gameSpeed,
             range = 1f..3f,
             steps = 1,
-            onValueChange = { settings = settings.copy(gameSpeed = it) },
+            onValueChange = onGameSpeedChanged,
         )
         SettingSlider(
             title = "Макс. тараканов на экране",
             value = settings.maxBugs,
             range = 1f..20f,
             steps = 18,
-            onValueChange = { settings = settings.copy(maxBugs = it) },
+            onValueChange = onMaxBugsChanged,
         )
         SettingSlider(
             title = "Интервал появления бонусов, с",
             value = settings.bonusIntervalSec,
             range = 5f..30f,
             steps = 24,
-            onValueChange = { settings = settings.copy(bonusIntervalSec = it) },
+            onValueChange = onBonusIntervalChanged,
         )
         SettingSlider(
             title = "Длительность раунда, с",
             value = settings.roundDurationSec,
             range = 30f..120f,
             steps = 89,
-            onValueChange = { settings = settings.copy(roundDurationSec = it) },
+            onValueChange = onRoundDurationChanged,
         )
 
         Button(
@@ -82,7 +93,7 @@ fun SettingsScreen(modifier: Modifier = Modifier) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        settings = GameSettings()
+                        onReset()
                         showResetDialog = false
                     }
                 ) {
@@ -128,6 +139,13 @@ private fun SettingSlider(
 @Composable
 private fun SettingsScreenPreview() {
     BugsGameTheme {
-        SettingsScreen()
+        SettingsScreen(
+            settings = GameSettings(),
+            onGameSpeedChanged = {},
+            onMaxBugsChanged = {},
+            onBonusIntervalChanged = {},
+            onRoundDurationChanged = {},
+            onReset = {},
+        )
     }
 }

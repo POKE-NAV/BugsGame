@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import com.example.bugsgame.ui.registration.RegistrationRoute
 import com.example.bugsgame.ui.authors.AuthorsScreen
 import com.example.bugsgame.ui.rules.RulesScreen
-import com.example.bugsgame.ui.settings.SettingsScreen
+import com.example.bugsgame.ui.settings.SettingsRoute
 import kotlinx.coroutines.launch
 
 @Composable
@@ -46,7 +46,7 @@ fun AppNavHost() {
                 0 -> RegistrationRoute()
                 1 -> RulesScreen()
                 2 -> AuthorsScreen()
-                3 -> SettingsScreen()
+                3 -> SettingsRoute()
             }
         }
     }
